@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,8 +24,10 @@ public class JwtValidationFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JwtValidationFilter.class);
 
     private final RestClient authServiceClient;
+    private final String authServiceUrl;
 
-    public JwtValidationFilter() {
+    public JwtValidationFilter(@Value("${auth.service.url}") String authServiceUrl) {
+        this.authServiceUrl = authServiceUrl;
         this.authServiceClient = RestClient.create();
     }
 
@@ -38,8 +41,8 @@ public class JwtValidationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
 
             try {
-                ResponseEntity<Void> validation = authServiceClient.post()
-                    .uri("http://localhost:8081/auth/validate")
+                ResponseEntity<Void> validation = authServiceClient.get()
+                    .uri(authServiceUrl + "/auth/validate")
                     .header("Authorization", header)
                     .retrieve()
                     .toBodilessEntity();

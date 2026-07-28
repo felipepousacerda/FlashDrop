@@ -8,6 +8,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -26,6 +28,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/orders/**", "/api/delivery/**").authenticated()
                 .anyRequest().permitAll()
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((req, res, e) ->
+                    res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+                .accessDeniedHandler((req, res, e) ->
+                    res.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden"))
             )
             .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class);
 
