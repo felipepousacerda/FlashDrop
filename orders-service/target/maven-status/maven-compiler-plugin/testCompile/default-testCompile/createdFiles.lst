@@ -1,4 +1,0 @@
-cl\flashdrop\orders\CheckDBTest.class
-cl\flashdrop\orders\application\usecase\ClaimDeliveryOrdersUseCaseTest.class
-cl\flashdrop\orders\application\usecase\CreateOrderUseCaseTest.class
-cl\flashdrop\orders\domain\model\OrderDomainTest.class
